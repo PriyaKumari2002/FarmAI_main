@@ -1,0 +1,224 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+  
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+  }
+  
+  .agri-result {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 0 20px;
+  }
+  
+  .location-weather-card {
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    border-radius: 20px;
+    padding: 30px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .location-weather-card::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+  }
+  
+  .location-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .weather-details {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .weather-icon-main {
+    font-size: 3.5rem;
+    margin-right: 20px;
+  }
+  
+  .weather-stats {
+    font-size: 1.1rem;
+  }
+  
+  .weather-stat {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .recommendation-card {
+    background: white;
+    border-radius: 20px;
+    padding: 35px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+  }
+  
+  .recommendation-header {
+    color: #4a6bff;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+  
+  .crop-recommendation {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2ecc71;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .crop-emoji {
+    font-size: 2.5rem;
+    margin-right: 15px;
+  }
+  
+  .factors {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .factor {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
+    width: 30%;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  }
+  
+  .factor-icon {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #4a6bff;
+  }
+  
+  .factor-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  
+  @media (max-width: 768px) {
+    .location-title {
+      font-size: 1.5rem;
+    }
+    
+    .weather-details {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .weather-icon-main {
+      margin-right: 0;
+      margin-bottom: 15px;
+    }
+    
+    .crop-recommendation {
+      font-size: 1.8rem;
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .crop-emoji {
+      margin-right: 0;
+      margin-bottom: 15px;
+    }
+    
+    .factor {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="agri-result">
+  <!-- Location and Weather Card -->
+  <div class="location-weather-card">
+    <div class="location-title">
+      🌍 {{ city|title }}, {{ state|title if state else "Your Area" }}
+    </div>
+    <div class="location-subtitle">Current Weather Conditions</div>
+    
+    <div class="weather-details">
+      <div class="weather-icon-main">
+        {% if temperature > 30 %}☀️
+        {% elif temperature > 20 %}⛅
+        {% else %}🌧️
+        {% endif %}
+      </div>
+      <div class="weather-stats">
+        <div class="weather-stat">🌡️ <b>Temperature:</b> {{ temperature }}°C</div>
+        <div class="weather-stat">💧 <b>Humidity:</b> {{ humidity }}%</div>
+        <div class="weather-stat">🌱 <b>Soil Condition:</b> Optimal</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Recommendation Card -->
+  <div class="recommendation-card">
+    <div class="recommendation-header">
+      Based on comprehensive analysis of:
+    </div>
+    
+    <div class="factors">
+      <div class="factor">
+        <div class="factor-icon">🌦️</div>
+        <div class="factor-title">Local Weather</div>
+        <div>Perfect for {{ prediction }} growth</div>
+      </div>
+      <div class="factor">
+        <div class="factor-icon">🌱</div>
+        <div class="factor-title">Soil Quality</div>
+        <div>Ideal nutrient balance</div>
+      </div>
+      <div class="factor">
+        <div class="factor-icon">📅</div>
+        <div class="factor-title">Seasonal Factors</div>
+        <div>Optimal planting time</div>
+      </div>
+    </div>
+    
+    <div class="crop-recommendation">
+      <span class="crop-emoji">
+        {% if prediction.lower() in ['wheat', 'rice', 'corn'] %}🌾
+        {% elif prediction.lower() in ['apple', 'orange'] %}🍎
+        {% elif prediction.lower() in ['tomato', 'potato'] %}🍅
+        {% else %}🌱
+        {% endif %}
+      </span>
+      <span>We recommend growing <br><span style="color: #e74c3c;">{{ prediction }}</span></span>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px; color: #7f8c8d;">
+      This recommendation is optimized for your specific location and current conditions
+    </div>
+  </div>
+</div>
+
+{% endblock %}

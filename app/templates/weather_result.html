@@ -1,0 +1,14 @@
+<!-- templates/weather_result.html -->
+{% extends "layout.html" %}
+{% block content %}
+  <h2>Weather-based Disease Alerts for {{ city }}</h2>
+  <p><strong>Temperature:</strong> {{ temp }} °C</p>
+  <p><strong>Humidity:</strong> {{ humidity }}%</p>
+
+  <h3>Possible Disease Alerts:</h3>
+  <ul>
+    {% for alert in alerts %}
+      <li>{{ alert }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

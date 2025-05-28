@@ -39,7 +39,7 @@
 				</div>
 				<div class="ab">
 					<h2>Welcome to FarmAI, where innovation meets agriculture</h2>
-					<p>Our team is dedicated to revolutionizing crop health management through cutting-edge services. We employ advanced machine learning and deep learning technologies to assist you in navigating the entire farming process. Make well-informed decisions by analyzing local demographics, understanding crop-affecting factors, and maintaining crop health for better yields.</p>
+					<p>Our team is dedicated to revolutionizing crop health management through cutting-edge services. We employ advanced machine learning technologies to assist you in navigating the entire farming process. Make well-informed decisions by analyzing local demographics, understanding crop-affecting factors, and maintaining crop health for better yields.</p>
 				</div>
 			</div>
 		</div>
@@ -59,9 +59,11 @@
 				<div class="blog-info">
 					<h4>Crop</h4>
 					<p> Suggests the most suitable crops to be grown based on the prevailing environmental and climatic conditions.</p>
-					<a href="{{ url_for('crop_recommend') }}">
-						<button class="seee">Click Here</button>
-					</a>
+					<div class="button-container">
+						<a href="{{ url_for('crop_recommend') }}">
+							<button class="seee">Click Here</button>
+						</a>
+					</div>
 				</div>
 			</div>
 			<div class="mw">
@@ -70,10 +72,12 @@
 				</div>
 				<div class="blog-info">
 					<h4>Fertilizer</h4>
-					<p class="sp">Advises on the ideal fertilizer for a specific soil and recommends a compatible crop for better productivity.</p>
-					<a href="{{ url_for('fertilizer_recommendation') }}">
-						<button class="seee">Click Here</button>
-					</a>
+					<p>Advises on the ideal fertilizer for a specific soil and recommends a compatible crop for better productivity.</p>
+					<div class="button-container">
+						<a href="{{ url_for('fertilizer_recommendation') }}">
+							<button class="seee">Click Here</button>
+						</a>
+					</div>
 				</div>
 			</div>
 			<div class="mw">
@@ -81,11 +85,13 @@
 					<img src="{{ url_for('static', filename='images/dis.gif') }}" class="img-fluid" alt="">
 				</div>
 				<div class="blog-info">
-					<h4>Crop Disease</h4>
-					<p>Predicts crop name and diseases, identify causes and provides effective solutions for curing them.</p>
-					<div class="ch"><a href="{{ url_for('disease_prediction') }}">
-						<button class="seee">Click Here</button>
-					</a></div>
+					<h4>Disease</h4>
+					<p>Uses Weather API to monitor temperature and humidity. Detects crop diseases based on current weather conditions.</p>
+					<div class="button-container">
+						<a href="{{ url_for('disease_check') }}">
+							<button class="seee">Click Here</button>
+						</a>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -93,19 +99,74 @@
 </section>
 <!-- //Products & Services -->
 
-<!-- Commented extra block -->
-<!-- 
-<section>
-<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-    <div class="hovereffect">
-        <img class="img-responsive" src="images/s2.jpg" alt="">
-        <div class="overlay">
-           <h2>Hover effect 1</h2>
-           <a class="info" href="#">link here</a>
-        </div>
-    </div>
-</div> 
--->
+<style>
+    /* Add these styles to your CSS */
+    .services {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 20px;
+    }
+    
+    .mw {
+        flex: 1;
+        min-width: 300px;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+    
+    .mw:hover {
+        transform: translateY(-10px);
+    }
+    
+    .blog-info {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    
+    .button-container {
+        margin-top: auto;
+        padding-top: 20px;
+    }
+    
+    .seee {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    
+    .seee:hover {
+        background: #45a049;
+    }
+    
+    .simg img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .blog-info h4 {
+        margin-bottom: 10px;
+        color: #333;
+    }
+    
+    .blog-info p {
+        color: #666;
+        margin-bottom: 15px;
+        flex-grow: 1;
+    }
+</style>
 
 </html>
 {% endblock %}

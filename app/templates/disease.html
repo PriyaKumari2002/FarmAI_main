@@ -1,49 +1,250 @@
-{% extends 'layout.html' %} {% block body %}
-
-
+{% extends "layout.html" %}
+{% block body %}
 <style>
-  html body {
-    background-color: rgb(206, 206, 228);
+  body {
+    background-color: #f8fafc;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .form-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+  }
+
+  .disease-card {
+    width: 100%;
+    max-width: 50rem;
+    background: white;
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .weather-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+    color: white;
+    padding: 1.5rem;
+  }
+
+  .weather-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .card-body {
+    padding: 2rem;
+  }
+
+  .form-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #475569;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.3);
+  }
+
+  .btn-block {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .btn-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-warning:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .weather-info {
+    background-color: #f1f5f9;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .weather-info h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #1e293b;
+    margin-bottom: 1rem;
+  }
+
+  .weather-info p {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: #334155;
+  }
+
+  .disease-alerts h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #1e293b;
+    margin-bottom: 1rem;
+  }
+
+  .alert-item {
+    padding: 1rem;
+    border-radius: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .alert-high {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border-left: 4px solid #ef4444;
+  }
+
+  .alert-medium {
+    background-color: #fef3c7;
+    color: #92400e;
+    border-left: 4px solid #f59e0b;
+  }
+
+  .alert-low {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border-left: 4px solid #10b981;
+  }
+
+  .alert-success {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  footer {
+    background-color:black;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-top: auto;
+  }
+
+  @media (max-width: 768px) {
+    .form-wrapper {
+      padding: 1rem;
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+    
+    .weather-info .row {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
   }
 </style>
-<br /><br />
-  <h2 style="text-align: center; margin: 0px; color: black">
-    <b>Find out which disease has been caught by your plant</b>
-  </h2>
-  <br />
-  <br>
 
-<div>
+<div class="form-wrapper">
+  <div class="disease-card">
+    <div class="weather-header">
+      <h3><i class="fa fa-map-marker-alt"></i> Weather Disease Analysis</h3>
+    </div>
+    <div class="card-body">
+      <form method="POST" class="mb-4">
+        <div class="form-group">
+          <label for="city"><i class="fa fa-city"></i> Enter City Name</label>
+          <input type="text" name="city" class="form-control" placeholder="e.g., New York" required>
+        </div>
+        <button type="submit" class="btn btn-warning btn-block">
+          <i class="fa fa-search"></i> Check Disease Risks
+        </button>
+      </form>
 
-  <form  method=post enctype=multipart/form-data class="formd">
-
-     <div class="p1">
-      <div class="db1">
-        <h2 class="h4 mb-3 font-weight-normal"><b>Please Upload The Image</b></h2>
-      <input type="file" name="file" class="form-control-file" id="inputfile" onchange="preview_image(event)" style="font-weight: bold;">
-       </div>
-      <div class="db2">
-        <img id="output-image" class="rounded mx-auto d-block" style="height: 80%;width: 50%; border: none;box-shadow: none;"
-        src="{{ url_for('static', filename='images/ani.gif') }}"/>
+      {% if weather %}
+      <div class="weather-info">
+        <h4><i class="fa fa-cloud-sun"></i> Weather in {{ weather.city }}</h4>
+        <div class="row">
+          <div class="col-md-4">
+            <p><i class="fa fa-temperature-high"></i> Temperature: <strong>{{ weather.temperature }}°C</strong></p>
+          </div>
+          <div class="col-md-4">
+            <p><i class="fa fa-tint"></i> Humidity: <strong>{{ weather.humidity }}%</strong></p>
+          </div>
+          <div class="col-md-4">
+            <p><i class="fa fa-wind"></i> Conditions: <strong>{{ weather.conditions }}</strong></p>
+          </div>
+        </div>
       </div>
-     </div>
-     <div class="p2">
-      <button type="submit" class="pred">Predict</button>
-     </div>
-  </form>
-  
+
+      <div class="disease-alerts">
+        <h4><i class="fa fa-exclamation-circle"></i> Disease Alerts</h4>
+        {% if alerts %}
+          {% for alert in alerts %}
+          <div class="alert-item 
+            {% if 'High risk' in alert %}alert-high
+            {% elif 'Moderate risk' in alert %}alert-medium
+            {% else %}alert-low{% endif %}">
+            <i class="fa {% if 'High risk' in alert %}fa-exclamation-triangle{% elif 'Moderate risk' in alert %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+            {{ alert }}
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="alert alert-success">
+            <i class="fa fa-check-circle"></i> No significant disease risks detected.
+          </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
 </div>
 
-<script type="text/javascript">
-  function preview_image(event) {
-    var reader = new FileReader();
-    reader.onload = function () {
-      var output = document.getElementById('output-image')
-      output.src = reader.result;
-    }
-    reader.readAsDataURL(event.target.files[0]);
-  }
-</script>
+<footer>
+  <p>© 2023 Weather Disease Analysis System | Designed for Agricultural Protection</p>
+</footer>
 
-</div>
 {% endblock %}

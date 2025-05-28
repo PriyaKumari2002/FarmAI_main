@@ -1,106 +1,232 @@
-from flask import Flask, render_template, request, Markup, redirect
+# from flask import Flask, render_template, request, redirect
+# from markupsafe import Markup
+# import numpy as np
+# import pandas as pd
+# import requests
+# import pickle
+# import os
+# import config
+
+# from utils.fertilizer import fertilizer_dic
+# from utils.weather_utils import get_disease_alerts
+
+# # ------------------------- FLASK SETUP -------------------------------------------------
+# app = Flask(__name__)
+# weather_api_key = config.weather_api_key
+
+# # ------------------------- LOAD MODELS -------------------------------------------------
+# crop_recommendation_model = pickle.load(open('models/RandomForest.pkl', 'rb'))
+
+# # ------------------------- UTILITY FUNCTIONS -------------------------------------------------
+# def weather_fetch(city_name):
+#     """Fetch weather data from OpenWeatherMap API"""
+#     base_url = "http://api.openweathermap.org/data/2.5/weather?"
+#     complete_url = f"{base_url}appid={weather_api_key}&q={city_name}&units=metric"
+    
+#     try:
+#         response = requests.get(complete_url)
+#         response.raise_for_status()
+#         data = response.json()
+        
+#         if "main" in data:
+#             return {
+#                 'temperature': data['main']['temp'],
+#                 'humidity': data['main']['humidity'],
+#                 'conditions': data['weather'][0]['main'] if data.get('weather') else 'N/A'
+#             }
+#         return None
+#     except requests.exceptions.RequestException as e:
+#         print(f"❌ Weather API Error: {str(e)}")
+#         return None
+
+# # ------------------------- ROUTES -------------------------------------------------
+# @app.route('/get_weather_data')
+# def get_weather_data():
+#     city = request.args.get('city')
+#     if not city:
+#         return jsonify({'error': 'City parameter is required'}), 400
+    
+#     weather_data = weather_fetch(city)
+#     if not weather_data:
+#         return jsonify({'error': 'Could not fetch weather data'}), 500
+    
+#     return jsonify({
+#         'temperature': weather_data['temperature'],
+#         'humidity': weather_data['humidity']
+#     })
+
+# @app.route('/')
+# def home():
+#     return render_template('index.html', title='Harvestify - Home')
+
+# @app.route('/disease-check', methods=['GET', 'POST'])
+# def disease_check():
+#     """Handle both weather-based disease alerts and weather result display"""
+#     if request.method == 'POST':
+#         city = request.form.get('city')
+#         if not city:
+#             return render_template('disease.html', error="Please enter a city name")
+        
+#         weather_data = weather_fetch(city)
+#         if not weather_data:
+#             return render_template('disease.html', error="Could not fetch weather data")
+        
+#         alerts = get_disease_alerts(
+#             weather_data['temperature'], 
+#             weather_data['humidity']
+#         )
+        
+#         return render_template(
+#             'disease.html',
+#             title='Harvestify - Disease Alerts',
+#             weather={
+#                 'city': city,
+#                 'temperature': weather_data['temperature'],
+#                 'humidity': weather_data['humidity'],
+#                 'conditions': weather_data['conditions']
+#             },
+#             alerts=alerts
+#         )
+    
+#     return render_template('disease.html', title='Harvestify - Disease Alerts')
+
+# @app.route('/crop-recommend')
+# def crop_recommend():
+#     return render_template('crop.html', title='Harvestify - Crop Recommendation')
+
+# @app.route('/fertilizer')
+# def fertilizer_recommendation():
+#     return render_template('fertilizer.html', title='Harvestify - Fertilizer Suggestion')
+
+# @app.route('/crop-predict', methods=['POST'])
+# def crop_prediction():
+#     """Handle crop prediction based on soil and weather conditions"""
+#     try:
+#         # Get form data
+#         N = int(request.form['nitrogen'])
+#         P = int(request.form['phosphorous'])
+#         K = int(request.form['pottasium'])
+#         ph = float(request.form['ph'])
+#         rainfall = float(request.form['rainfall'])
+#         city = request.form.get('city')
+        
+#         # Get weather data
+#         weather_data = weather_fetch(city)
+#         if not weather_data:
+#             return render_template('try_again.html', title='Harvestify - Crop Recommendation')
+        
+#         # Make prediction
+#         data = np.array([[N, P, K, weather_data['temperature'], 
+#                          weather_data['humidity'], ph, rainfall]])
+#         prediction = crop_recommendation_model.predict(data)[0]
+        
+#         return render_template(
+#             'crop-result.html',
+#             prediction=prediction,
+#             temperature=weather_data['temperature'],
+#             humidity=weather_data['humidity'],
+#             city=city,
+#             title='Harvestify - Crop Recommendation'
+#         )
+#     except Exception as e:
+#         print(f"Error in crop prediction: {str(e)}")
+#         return render_template('try_again.html', title='Harvestify - Crop Recommendation')
+
+# @app.route('/fertilizer-predict', methods=['POST'])
+# def fert_recommend():
+#     """Provide fertilizer recommendations based on crop needs"""
+#     try:
+#         crop_name = str(request.form['cropname']).strip().lower()
+#         N = int(request.form['nitrogen'])
+#         P = int(request.form['phosphorous'])
+#         K = int(request.form['pottasium'])
+        
+#         # Load fertilizer data
+#         base_dir = os.path.dirname(os.path.abspath(__file__))
+#         df = pd.read_csv(os.path.join(base_dir, 'Data', 'fertilizer.csv'))
+#         df['Crop'] = df['Crop'].str.strip().str.lower()
+        
+#         if crop_name not in df['Crop'].values:
+#             return render_template('fertilizer-result.html', 
+#                                  recommendation="Crop not found in database",
+#                                  title='Harvestify - Fertilizer Suggestion')
+        
+#         # Calculate nutrient differences
+#         nr = df[df['Crop'] == crop_name]['N'].iloc[0]
+#         pr = df[df['Crop'] == crop_name]['P'].iloc[0]
+#         kr = df[df['Crop'] == crop_name]['K'].iloc[0]
+        
+#         n_diff = nr - N
+#         p_diff = pr - P
+#         k_diff = kr - K
+        
+#         # Determine recommendation
+#         max_diff = max(abs(n_diff), abs(p_diff), abs(k_diff))
+#         if abs(n_diff) == max_diff:
+#             key = 'NHigh' if n_diff < 0 else 'Nlow'
+#         elif abs(p_diff) == max_diff:
+#             key = 'PHigh' if p_diff < 0 else 'Plow'
+#         else:
+#             key = 'KHigh' if k_diff < 0 else 'Klow'
+        
+#         recommendation = Markup(str(fertilizer_dic[key]))
+#         return render_template('fertilizer-result.html', 
+#                              recommendation=recommendation,
+#                              title='Harvestify - Fertilizer Suggestion')
+#     except Exception as e:
+#         print(f"Error in fertilizer recommendation: {str(e)}")
+#         return render_template('fertilizer-result.html',
+#                              recommendation="Error processing your request",
+#                              title='Harvestify - Fertilizer Suggestion')
+
+# # ------------------------- MAIN -------------------------------------------------
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=5050, debug=True)
+
+from flask import Flask, render_template, request
+from markupsafe import Markup
 import numpy as np
 import pandas as pd
-from utils.disease import disease_dic
-from utils.fertilizer import fertilizer_dic
 import requests
-import config
 import pickle
-import io
-import torch
-from torchvision import transforms
-from PIL import Image
-from utils.model import ResNet9
 import os
 
-# -------------------------LOAD MODELS-------------------------------------------------
+from utils.fertilizer import fertilizer_dic
+from utils.weather_utils import get_disease_alerts
+import config
 
-disease_classes = [
-    'Apple___Apple_scab',
-    'Apple___Black_rot',
-    'Apple___Cedar_apple_rust',
-    'Apple___healthy',
-    'Blueberry___healthy',
-    'Cherry_(including_sour)___Powdery_mildew',
-    'Cherry_(including_sour)___healthy',
-    'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot',
-    'Corn_(maize)___Common_rust_',
-    'Corn_(maize)___Northern_Leaf_Blight',
-    'Corn_(maize)___healthy',
-    'Grape___Black_rot',
-    'Grape___Esca_(Black_Measles)',
-    'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)',
-    'Grape___healthy',
-    'Orange___Haunglongbing_(Citrus_greening)',
-    'Peach___Bacterial_spot',
-    'Peach___healthy',
-    'Pepper,_bell___Bacterial_spot',
-    'Pepper,_bell___healthy',
-    'Potato___Early_blight',
-    'Potato___Late_blight',
-    'Potato___healthy',
-    'Raspberry___healthy',
-    'Soybean___healthy',
-    'Squash___Powdery_mildew',
-    'Strawberry___Leaf_scorch',
-    'Strawberry___healthy',
-    'Tomato___Bacterial_spot',
-    'Tomato___Early_blight',
-    'Tomato___Late_blight',
-    'Tomato___Leaf_Mold',
-    'Tomato___Septoria_leaf_spot',
-    'Tomato___Spider_mites Two-spotted_spider_mite',
-    'Tomato___Target_Spot',
-    'Tomato___Tomato_Yellow_Leaf_Curl_Virus',
-    'Tomato___Tomato_mosaic_virus',
-    'Tomato___healthy'
-]
+# ------------------------- FLASK SETUP -------------------------------------------------
+app = Flask(__name__)
+weather_api_key = config.weather_api_key
 
-# Load models
-disease_model_path = 'models/plant_disease_model.pth'
-disease_model = ResNet9(3, len(disease_classes))
-disease_model.load_state_dict(torch.load(disease_model_path, map_location=torch.device('cpu')))
-disease_model.eval()
-
+# ------------------------- LOAD MODELS -------------------------------------------------
 crop_recommendation_model_path = 'models/RandomForest.pkl'
 crop_recommendation_model = pickle.load(open(crop_recommendation_model_path, 'rb'))
 
-# -------------------------UTILS-------------------------------------------------
-
+# ------------------------- UTILITY FUNCTIONS -------------------------------------------------
 def weather_fetch(city_name):
-    api_key = config.weather_api_key
+    """Fetch weather data from OpenWeatherMap API"""
+    api_key = weather_api_key
     base_url = "http://api.openweathermap.org/data/2.5/weather?"
-    complete_url = base_url + "appid=" + api_key + "&q=" + city_name
-    
-    response = requests.get(complete_url)
-    x = response.json()
+    complete_url = f"{base_url}appid={api_key}&q={city_name}&units=metric"
 
-    if response.status_code == 200 and "main" in x:
-        y = x["main"]
-        temperature = round((y["temp"] - 273.15), 2)
-        humidity = y["humidity"]
-        return temperature, humidity
-    else:
-        print("❌ Weather API Error:", x.get("message", "Unknown Error"))
+    try:
+        response = requests.get(complete_url)
+        response.raise_for_status()
+        data = response.json()
+
+        if "main" in data:
+            return (
+                round(data['main']['temp'], 2),
+                data['main']['humidity'],
+                data['weather'][0]['main'] if data.get('weather') else 'N/A'
+            )
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Weather API Error: {str(e)}")
         return None
 
-def predict_image(img, model=disease_model):
-    transform = transforms.Compose([
-        transforms.Resize(256),
-        transforms.ToTensor(),
-    ])
-    image = Image.open(io.BytesIO(img))
-    img_t = transform(image)
-    img_u = torch.unsqueeze(img_t, 0)
-    yb = model(img_u)
-    _, preds = torch.max(yb, dim=1)
-    prediction = disease_classes[preds[0].item()]
-    return prediction
-
-# -------------------------FLASK-------------------------------------------------
-
-app = Flask(__name__)
-
+# ------------------------- ROUTES -------------------------------------------------
 @app.route('/')
 def home():
     return render_template('index.html', title='Harvestify - Home')
@@ -112,6 +238,36 @@ def crop_recommend():
 @app.route('/fertilizer')
 def fertilizer_recommendation():
     return render_template('fertilizer.html', title='Harvestify - Fertilizer Suggestion')
+
+@app.route('/disease-check', methods=['GET', 'POST'])
+def disease_check():
+    """Handle both weather-based disease alerts and weather result display"""
+    title = 'Harvestify - Disease Alerts'
+    if request.method == 'POST':
+        city = request.form.get('city')
+        if not city:
+            return render_template('disease.html', error="Please enter a city name", title=title)
+        
+        weather_data = weather_fetch(city)
+        if not weather_data:
+            return render_template('disease.html', error="Could not fetch weather data", title=title)
+        
+        temperature, humidity, conditions = weather_data
+        alerts = get_disease_alerts(temperature, humidity)
+        
+        return render_template(
+            'disease.html',
+            title=title,
+            weather={
+                'city': city,
+                'temperature': temperature,
+                'humidity': humidity,
+                'conditions': conditions
+            },
+            alerts=alerts
+        )
+    
+    return render_template('disease.html', title=title)
 
 @app.route('/crop-predict', methods=['POST'])
 def crop_prediction():
@@ -126,7 +282,7 @@ def crop_prediction():
 
         weather_data = weather_fetch(city)
         if weather_data:
-            temperature, humidity = weather_data
+            temperature, humidity, _ = weather_data
             data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
             final_prediction = crop_recommendation_model.predict(data)[0]
             return render_template(
@@ -154,67 +310,34 @@ def fert_recommend():
         df['Crop'] = df['Crop'].str.strip().str.lower()
 
         if crop_name not in df['Crop'].values:
-            return f"❌ Error: Crop '{crop_name}' not found in fertilizer.csv."
+            return render_template('fertilizer-result.html',
+                                   recommendation=f"Crop '{crop_name}' not found in database.",
+                                   title=title)
 
         nr = df[df['Crop'] == crop_name]['N'].iloc[0]
         pr = df[df['Crop'] == crop_name]['P'].iloc[0]
         kr = df[df['Crop'] == crop_name]['K'].iloc[0]
 
-        n = nr - N
-        p = pr - P
-        k = kr - K
-        temp = {abs(n): "N", abs(p): "P", abs(k): "K"}
-        max_value = temp[max(temp.keys())]
+        n_diff = nr - N
+        p_diff = pr - P
+        k_diff = kr - K
 
-        if max_value == "N":
-            key = 'NHigh' if n < 0 else 'Nlow'
-        elif max_value == "P":
-            key = 'PHigh' if p < 0 else 'Plow'
+        max_diff = max(abs(n_diff), abs(p_diff), abs(k_diff))
+        if abs(n_diff) == max_diff:
+            key = 'NHigh' if n_diff < 0 else 'Nlow'
+        elif abs(p_diff) == max_diff:
+            key = 'PHigh' if p_diff < 0 else 'Plow'
         else:
-            key = 'KHigh' if k < 0 else 'Klow'
+            key = 'KHigh' if k_diff < 0 else 'Klow'
 
-        response = Markup(str(fertilizer_dic[key]))
-        return render_template('fertilizer-result.html', recommendation=response, title=title)
+        recommendation = Markup(str(fertilizer_dic[key]))
+        return render_template('fertilizer-result.html',
+                               recommendation=recommendation,
+                               title=title)
 
     except Exception as e:
         return f"🔥 Internal Server Error: <pre>{str(e)}</pre>"
 
-@app.route('/disease-predict', methods=['GET', 'POST'])
-def disease_prediction():
-    title = 'Harvestify - Disease Detection'
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return redirect(request.url)
-        file = request.files.get('file')
-        if not file:
-            return render_template('disease.html', title=title)
-        try:
-            img = file.read()
-            prediction = predict_image(img)
-            prediction = Markup(str(disease_dic[prediction]))
-            return render_template('disease-result.html', prediction=prediction, title=title)
-        except:
-            pass
-    return render_template('disease.html', title=title)
-
-import requests
-
-def translate_text(text, target_lang):
-    url = "https://libretranslate.de/translate"
-    payload = {
-        "q": text,
-        "source": "en",
-        "target": target_lang,
-        "format": "text"
-    }
-
-    try:
-        response = requests.post(url, data=payload)
-        response.raise_for_status()
-        return response.json()["translatedText"]
-    except Exception as e:
-        print("Translation failed:", e)
-        return text
-
+# ------------------------- MAIN -------------------------------------------------
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=5050, debug=True)
+    app.run(host='0.0.0.0', port=5050, debug=True)

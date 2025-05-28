@@ -1,42 +1,6 @@
-# Core Libraries
-numpy==1.21.6
-pandas==1.3.5
-matplotlib==3.3.3
-seaborn==0.11.0
-scikit-learn==0.23.2
-scipy==1.5.4
-
-# Deep Learning (compatible versions)
-torch==1.13.1
-torchvision==0.14.1
-torchaudio==0.13.1
-xgboost==1.2.1
-
-# Jupyter & Dev Tools
-jupyter
-notebook
-ipykernel==5.3.4
-ipywidgets==7.5.1
-qtconsole==5.0.1
-
-# Flask and Deployment
-Flask>=2.2.5
-Werkzeug>=2.2.2
-Jinja2>=3.0
-itsdangerous>=2.0
-
-
-
-# Pillow (Image Processing)
-Pillow==9.5.0
-
-# Utils
-joblib==0.17.0
-python-dateutil==2.8.1
-pytz==2020.4
-requests==2.31.0
-urllib3==1.26.2
-
-# Optional
-pipreqs==0.4.10
-simplejson==3.17.2
+Flask==3.1.1
+MarkupSafe==2.1.3
+numpy==2.2.6
+pandas==2.2.3
+Requests==2.32.3
+torch==2.2.2

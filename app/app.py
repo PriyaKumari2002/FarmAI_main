@@ -182,7 +182,7 @@
 # # ------------------------- MAIN -------------------------------------------------
 # if __name__ == '__main__':
 #     app.run(host='0.0.0.0', port=5050, debug=True)
-from utils.fertilizer import fertilizer_dic
+from app.utils.fertilizer import fertilizer_dic
 from utils.weather_utils import get_disease_alerts
 import config
 
